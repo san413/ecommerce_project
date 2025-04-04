@@ -1,0 +1,27 @@
+<!-- store/templates/store/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>E-Commerce Home</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        .product { border: 1px solid #ddd; padding: 1rem; margin-bottom: 1rem; }
+        img { max-width: 150px; display: block; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Store</h1>
+
+    {% for product in products %}
+    <div class="product">
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% endif %}
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.description }}</p>
+        <strong>${{ product.price }}</strong>
+    </div>
+    {% endfor %}
+</body>
+</html>
