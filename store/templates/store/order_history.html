@@ -1,0 +1,27 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Order History 🧾</h1>
+
+    {% for order in orders %}
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h5>Order #{{ order.id }} - {{ order.created_at|date:"M d, Y H:i" }}</h5>
+            <p><strong>Status:</strong> {% if order.is_paid %} Paid {% else %} Not Paid {% endif %}</p>
+            <p><strong>Total:</strong> ${{ order.total_price }}</p>
+            <ul class="list-group mt-3">
+                {% for item in order.items.all %}
+                <li class="list-group-item d-flex justify-content-between">
+                    {{ item.product.name }} (x{{ item.quantity }})
+                    <span>${{ item.price }}</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">No orders found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

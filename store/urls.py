@@ -13,5 +13,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('place-order/', views.place_order, name='place_order'),
     path('order-success/', views.order_success, name='order_success'),
+    path('order-history/', views.order_history, name='order_history'),
+
 
 ]

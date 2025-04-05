@@ -101,6 +101,11 @@ def place_order(request):
 def order_success(request):
     return render(request, 'store/order_success.html')
 
+@login_required
+def order_history(request):
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'store/order_history.html', {'orders': orders})
+
 # Login view
 def login_view(request):
     return render(request, 'store/login.html')
