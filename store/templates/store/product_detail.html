@@ -12,7 +12,9 @@
             <h2>{{ product.name }}</h2>
             <p>{{ product.description }}</p>
             <h4 class="text-primary">${{ product.price }}</h4>
-            <a href="{% url 'cart' %}" class="btn btn-success">Add to Cart</a>
+
+            <!-- Working Add to Cart button -->
+            <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
         </div>
     </div>
 </div>
