@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import Product, Cart, Order, OrderItem
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Home page
 def home(request):
@@ -105,6 +106,22 @@ def order_success(request):
 def order_history(request):
     orders = Order.objects.filter(user=request.user).order_by('-created_at')
     return render(request, 'store/order_history.html', {'orders': orders})
+
+@staff_member_required
+def admin_dashboard(request):
+    from .models import Product, Order, Cart
+
+    total_products = Product.objects.count()
+    total_orders = Order.objects.count()
+    total_pending = Order.objects.filter(is_paid=False).count()
+    total_paid = Order.objects.filter(is_paid=True).count()
+
+    return render(request, 'store/admin_dashboard.html', {
+        'total_products': total_products,
+        'total_orders': total_orders,
+        'total_pending': total_pending,
+        'total_paid': total_paid,
+    })
 
 # Login view
 def login_view(request):
