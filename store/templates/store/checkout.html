@@ -17,7 +17,10 @@
 
         <h5>Total: ${{ total_price|floatformat:2 }}</h5>
         <hr>
-        <a href="#" class="btn btn-primary w-100">Place Order</a>
+        <form method="post" action="{% url 'place_order' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">Place Order</button>
+        </form>
     </div>
 </div>
 {% endblock %}

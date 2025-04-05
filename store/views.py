@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from .models import Product, Cart
+from .models import Product, Cart, Order, OrderItem
 
 # Home page
 def home(request):
@@ -73,6 +73,33 @@ def checkout(request):
         'cart_items': cart_items,
         'total_price': total_price,
     })
+
+@login_required
+def place_order(request):
+    cart_items = Cart.objects.filter(user=request.user)
+    if not cart_items:
+        return redirect('cart')  # Nothing to order
+
+    total = sum(item.product.price * item.quantity for item in cart_items)
+
+    # Create order
+    order = Order.objects.create(user=request.user, total_price=total)
+
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            product=item.product,
+            quantity=item.quantity,
+            price=item.product.price
+        )
+    # Clear cart
+    cart_items.delete()
+
+    return redirect('order_success')  # You’ll define this next
+
+@login_required
+def order_success(request):
+    return render(request, 'store/order_success.html')
 
 # Login view
 def login_view(request):
