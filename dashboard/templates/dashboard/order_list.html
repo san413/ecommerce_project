@@ -1,0 +1,14 @@
+<h2>All Orders</h2>
+<ul>
+    {% for order in orders %}
+        <li>
+            Order #{{ order.id }} | 
+            User: {{ order.user.username }} | 
+            Total: ₹{{ order.total_price }} | 
+            Status: {% if order.is_paid %}Paid{% else %}Pending{% endif %} | 
+            Created: {{ order.created_at|date:"Y-m-d H:i" }}
+        </li>
+    {% empty %}
+        <li>No orders found.</li>
+    {% endfor %}
+</ul>

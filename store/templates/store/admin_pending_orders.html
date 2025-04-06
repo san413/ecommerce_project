@@ -1,0 +1,9 @@
+{% extends 'store/base.html' %}
+{% block content %}
+  <h2>Pending Orders</h2>
+  <ul>
+    {% for order in orders %}
+      <li>Order #{{ order.id }} | User: {{ order.user.username }} | Total: ${{ order.total_price }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

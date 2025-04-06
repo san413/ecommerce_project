@@ -123,6 +123,29 @@ def admin_dashboard(request):
         'total_paid': total_paid,
     })
 
+@staff_member_required
+def admin_products_list(request):
+    products = Product.objects.all()
+    return render(request, 'store/admin_products.html', {'products': products})
+
+
+@staff_member_required
+def all_orders(request):
+    orders = Order.objects.all()
+    return render(request, 'store/admin_orders.html', {'orders': orders})
+
+
+@staff_member_required
+def pending_orders(request):
+    orders = Order.objects.filter(is_paid=False)
+    return render(request, 'store/admin_orders.html', {'orders': orders})
+
+
+@staff_member_required
+def paid_orders(request):
+    orders = Order.objects.filter(is_paid=True)
+    return render(request, 'store/admin_orders.html', {'orders': orders})
+
 # Login view
 def login_view(request):
     return render(request, 'store/login.html')

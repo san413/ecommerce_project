@@ -1,0 +1,14 @@
+<h2>Paid Orders</h2>
+
+<ul>
+    {% for order in orders %}
+        <li>
+            Order #{{ order.id }}<br>
+            Status: {{ order.is_paid|yesno:"Paid,Pending" }}<br>
+            Customer: {{ order.user.username }}<br>
+            Date: {{ order.created_at|date:"Y-m-d H:i" }}
+        </li>
+    {% empty %}
+        <li>No paid orders found.</li>
+    {% endfor %}
+</ul>

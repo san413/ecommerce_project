@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import path, include  # ✅ Add include here
 from . import views
+from django.contrib import admin
+
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -14,8 +16,9 @@ urlpatterns = [
     path('place-order/', views.place_order, name='place_order'),
     path('order-success/', views.order_success, name='order_success'),
     path('order-history/', views.order_history, name='order_history'),
-    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 
+    
+    path('dashboard/', include('dashboard.urls')),  # 👈 Add this line
 
 
 ]
