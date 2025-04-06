@@ -1,0 +1,33 @@
+<h2>Pay for Order #{{ order.id }}</h2>
+<p>Total: ₹{{ order.total_price }}</p>
+
+<form id="razorpay-form" action="/payment/success/" method="POST">
+    {% csrf_token %}
+    <script
+        src="https://checkout.razorpay.com/v1/checkout.js"
+        data-key="{{ razorpay_key_id }}"
+        data-amount="{{ payment.amount }}"
+        data-currency="INR"
+        data-order_id="{{ payment.id }}"
+        data-buttontext="Pay Now"
+        data-name="My Store"
+        data-description="Test Payment"
+        data-prefill.name="{{ request.user.get_full_name }}"
+        data-prefill.email="{{ request.user.email }}"
+        data-theme.color="#F37254"
+    ></script>
+  
+    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+  </form>
+  
+  <script>
+    document.addEventListener("payment.success", function (response) {
+      document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+      document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+      document.getElementById('razorpay_signature').value = response.razorpay_signature;
+      document.getElementById('razorpay-form').submit();
+    });
+  </script>
+</form>

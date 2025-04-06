@@ -23,12 +23,10 @@
                 </li>
                 {% endfor %}
             </ul>
-
             {% if not order.is_paid %}
-            <form method="post" action="{% url 'make_payment' order.id %}" class="mt-3 text-end">
-                {% csrf_token %}
+            <form method="get" action="{% url 'initiate_payment' order.id %}" class="mt-3 text-end">
                 <button type="submit" class="btn btn-primary">Pay Now 💳</button>
-            </form>
+            </form>            
             {% endif %}
         </div>
     </div>

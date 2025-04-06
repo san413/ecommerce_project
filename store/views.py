@@ -3,6 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from .models import Product, Cart, Order, OrderItem
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib import messages
+import razorpay
+from django.conf import settings
+from store.models import Order
+from django.views.decorators.csrf import csrf_exempt
 
 # Home page
 def home(request):
@@ -154,6 +159,59 @@ def make_payment(request, order_id):
     order.save()
 
     return redirect('order_history')  # Replace with your actual URL name
+
+def initiate_payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+    payment = client.order.create({
+        'amount': int(order.total_price * 100),  # Razorpay uses paise
+        'currency': 'INR',
+        'payment_capture': 1
+    })
+
+    order.razorpay_order_id = payment['id']
+    order.save()
+
+    context = {
+        'order': order,
+        'payment': payment,
+        'razorpay_key_id': settings.RAZORPAY_KEY_ID
+    }
+
+    return render(request, 'store/payment.html', context)
+
+def payment_success(request):
+    return render(request, 'store/payment_success.html')
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+        params_dict = {
+            'razorpay_payment_id': request.POST.get('razorpay_payment_id'),
+            'razorpay_order_id': request.POST.get('razorpay_order_id'),
+            'razorpay_signature': request.POST.get('razorpay_signature')
+        }
+
+        try:
+            client.utility.verify_payment_signature(params_dict)
+
+            # Find the matching order using razorpay_order_id
+            order = Order.objects.get(razorpay_order_id=params_dict['razorpay_order_id'])
+            order.is_paid = True
+            order.save()
+
+            messages.success(request, f"Payment successful for Order #{order.id}")
+            return render(request, 'store/payment_success.html', {'order': order})
+
+        except razorpay.errors.SignatureVerificationError:
+            messages.error(request, "Payment verification failed.")
+            return redirect('home')
+
+    return redirect('home')
 
 # Login view
 def login_view(request):
