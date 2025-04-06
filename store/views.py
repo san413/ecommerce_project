@@ -146,6 +146,15 @@ def paid_orders(request):
     orders = Order.objects.filter(is_paid=True)
     return render(request, 'store/admin_orders.html', {'orders': orders})
 
+def make_payment(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+
+    # You can replace this with real payment integration
+    order.is_paid = True
+    order.save()
+
+    return redirect('order_history')  # Replace with your actual URL name
+
 # Login view
 def login_view(request):
     return render(request, 'store/login.html')

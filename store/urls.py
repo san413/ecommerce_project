@@ -16,9 +16,8 @@ urlpatterns = [
     path('place-order/', views.place_order, name='place_order'),
     path('order-success/', views.order_success, name='order_success'),
     path('order-history/', views.order_history, name='order_history'),
-
-    
     path('dashboard/', include('dashboard.urls')),  # 👈 Add this line
+    path('pay/<int:order_id>/', views.make_payment, name='make_payment'),
 
 
 ]
