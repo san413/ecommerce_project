@@ -1,33 +1,60 @@
-<h2>Pay for Order #{{ order.id }}</h2>
-<p>Total: ₹{{ order.total_price }}</p>
+{% load static %}
 
-<form id="razorpay-form" action="/payment/success/" method="POST">
-    {% csrf_token %}
-    <script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        data-key="{{ razorpay_key_id }}"
-        data-amount="{{ payment.amount }}"
-        data-currency="INR"
-        data-order_id="{{ payment.id }}"
-        data-buttontext="Pay Now"
-        data-name="My Store"
-        data-description="Test Payment"
-        data-prefill.name="{{ request.user.get_full_name }}"
-        data-prefill.email="{{ request.user.email }}"
-        data-theme.color="#F37254"
-    ></script>
-  
-    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
-    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
-    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
-  </form>
-  
-  <script>
-    document.addEventListener("payment.success", function (response) {
-      document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
-      document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
-      document.getElementById('razorpay_signature').value = response.razorpay_signature;
-      document.getElementById('razorpay-form').submit();
-    });
-  </script>
-</form>
+<div class="container mt-5 mb-5">
+    <!-- Show UPI QR Code -->
+    <div class="text-center">
+        <h2 class="mb-4">Scan and Pay with UPI</h2>
+
+        <div class="d-flex justify-content-center mb-3">
+            <img src="{% static 'store/images/upi_scanner.jpeg' %}" alt="Scan to Pay" class="img-fluid" style="max-width: 300px; border: 2px solid #ccc; border-radius: 10px;">
+        </div>
+
+        <p><b>Note:</b> Please scan this code with your UPI app (Google Pay, PhonePe, Paytm) and complete the payment manually.</p>
+
+        <!-- Manual confirmation button -->
+        <form method="post" action="{% url 'payment_confirmation' %}" class="mt-3">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">I have paid</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <!-- Razorpay Payment Section -->
+    <div class="text-center">
+        <h2 class="mb-4">Or Pay Online</h2>
+        <h4>Pay for Order #{{ order.id }}</h4>
+        <p>Total: ₹{{ order.total_price }}</p>
+
+        <form id="razorpay-form" action="/payment/success/" method="POST">
+            {% csrf_token %}
+            <script
+                src="https://checkout.razorpay.com/v1/checkout.js"
+                data-key="{{ razorpay_key_id }}"
+                data-amount="{{ payment.amount }}"
+                data-currency="INR"
+                data-order_id="{{ payment.id }}"
+                data-buttontext="Pay Now"
+                data-name="My Store"
+                data-description="Test Payment"
+                data-prefill.name="{{ request.user.get_full_name }}"
+                data-prefill.email="{{ request.user.email }}"
+                data-theme.color="#F37254"
+            ></script>
+
+            <!-- Hidden fields to capture Razorpay response -->
+            <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+            <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+            <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+        </form>
+    </div>
+</div>
+
+<script>
+  document.addEventListener("payment.success", function (response) {
+    document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+    document.getElementById('razorpay_order_id').value = response.razorpay_order_id;
+    document.getElementById('razorpay_signature').value = response.razorpay_signature;
+    document.getElementById('razorpay-form').submit();
+  });
+</script>

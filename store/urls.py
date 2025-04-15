@@ -19,4 +19,6 @@ urlpatterns = [
     path('pay/manual/<int:order_id>/', views.make_payment, name='make_payment'),
     path('pay/initiate/<int:order_id>/', views.initiate_payment, name='initiate_payment'),
     path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/confirmation/', views.payment_confirmation, name='payment_confirmation'),
+
 ]

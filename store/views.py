@@ -8,6 +8,7 @@ import razorpay
 from django.conf import settings
 from store.models import Order
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import redirect
 
 # Home page
 def home(request):
@@ -212,6 +213,13 @@ def payment_success(request):
             return redirect('home')
 
     return redirect('home')
+
+def payment_confirmation(request):
+    if request.method == 'POST':
+        # Do something here like mark order as paid
+        # e.g., update order status
+        return redirect('order_success')  # or any success page
+    return redirect('home')  # fallback
 
 # Login view
 def login_view(request):
